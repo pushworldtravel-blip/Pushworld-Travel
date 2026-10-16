@@ -1,3 +1,67 @@
+import { useState } from 'react';
+import { ArrowRight, BriefcaseBusiness, CheckCircle2, Compass, Gem } from 'lucide-react';
+import { Navbar } from './components/Navbar';
+import { Hero } from './components/Hero';
+import { AboutUsSection } from './components/AboutUsSection';
+import { ServicesSection } from './components/ServicesSection';
+import { PackagesSection } from './components/PackagesSection';
+import { DestinationsSection } from './components/DestinationsSection';
+import { BrochuresSection } from './components/BrochuresSection';
+import { WhyChooseUs } from './components/WhyChooseUs';
+import { GoogleIntegrationSection } from './components/GoogleIntegrationSection';
+import { TestimonialsSection } from './components/TestimonialsSection';
+import { Footer } from './components/Footer';
+import { BookingModal } from './components/BookingModal';
+import { PackageDetailsModal } from './components/PackageDetailsModal';
+import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { PACKAGES, PackageItem } from './data/travelData';
+
+const servicePages: Record<string, { title: string; eyebrow: string; intro: string; benefits: string[]; icon: 'gem' | 'compass' | 'business' }> = {
+  '/services/luxury-premium-travel': {
+    title: 'Luxury & Premium Travel', eyebrow: 'Travel exceptionally', icon: 'gem',
+    intro: 'Thoughtfully planned, high-comfort journeys with handpicked stays, seamless transfers and personal support from the first enquiry to your return.',
+    benefits: ['Premium hotels, resorts and private stays', 'Tailored itineraries and special experiences', 'Private transfers and carefully coordinated logistics', 'Dedicated assistance throughout your journey'],
+  },
+  '/services/custom-trip-planner': {
+    title: 'Custom Trip Planner', eyebrow: 'Your trip, your way', icon: 'compass',
+    intro: 'Tell us what you love, your travel dates and your budget. We will help shape a trip around your interests instead of fitting you into a one-size-fits-all package.',
+    benefits: ['Personalised routes and day-by-day itineraries', 'Flexible destinations, dates and pace', 'Options aligned to your budget and travel style', 'One point of contact for planning and coordination'],
+  },
+  '/services/corporate-travel': {
+    title: 'Corporate Travel', eyebrow: 'Business travel made simpler', icon: 'business',
+    intro: 'Reliable travel coordination for teams, executives, meetings and corporate events, with practical planning that keeps your people and schedules moving.',
+    benefits: ['Business flights and accommodation coordination', 'Group and conference travel arrangements', 'Transfers and itinerary management', 'Clear communication for changes and special requests'],
+  },
+};
+
+function PageIntro({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) {
+  return <section className="bg-slate-950 text-white py-16 sm:py-24"><div className="mx-auto max-w-7xl px-5 sm:px-8"><p className="mb-3 text-sm font-bold uppercase tracking-[0.22em] text-amber-400">{eyebrow}</p><h1 className="max-w-4xl font-display text-4xl font-bold leading-tight sm:text-6xl">{title}</h1><p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">{description}</p></div></section>;
+}
+
+export default function App() {
+  const pathname = window.location.pathname.replace(/\/$/, '') || '/';
+  const initialQuery = new URLSearchParams(window.location.search);
+  const [selectedCategory, setSelectedCategory] = useState(initialQuery.get('category') || 'all');
+  const [searchKeyword, setSearchKeyword] = useState(initialQuery.get('keyword') || '');
+  const [searchDestination, setSearchDestination] = useState(initialQuery.get('destination') || '');
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [selectedBookingPkg, setSelectedBookingPkg] = useState<PackageItem | null>(null);
+  const [detailModalPkg, setDetailModalPkg] = useState<PackageItem | null>(null);
+
+  const filteredPackages = PACKAGES.filter((pkg) => {
+    if (selectedCategory === 'august') {
+      if (!(pkg.id.includes('august') || pkg.title.toLowerCase().includes('august') || pkg.validity.toLowerCase().includes('august'))) return false;
+    } else if (selectedCategory !== 'all' && pkg.category !== selectedCategory && !searchDestination) return false;
+    if (searchDestination) {
+      const q = searchDestination.toLowerCase().trim();
+      const fields = `${pkg.destination} ${pkg.title} ${pkg.overview}`.toLowerCase();
+      const tokens = q.split(/[\s,&/]+/).filter((t) => t.length > 2 && !['and','the','national','park','reserve','island','beach','coast','kenya','circuits'].includes(t));
+      if (!fields.includes(q) && !tokens.some((t) => fields.includes(t))) return false;
+    }
+    if (searchKeyword) {
+      const tokens = searchKeyword.toLowerCase().trim().split(/\s+/).filter((t) => t.length > 1);
+      const searchable = `${pkg.title} ${pkg.destination} ${pkg.overview} ${pkg.highlights.join(' ')} ${pkg.summaryInclusion}`.toLowerCase();
+      if (!tokens.some((t) => searchable.includes(t))) return false;
     }
     return true;
   });
