@@ -55,7 +55,7 @@ export default function App() {
     if (searchDestination) {
       const q = searchDestination.toLowerCase().trim();
       const fields = `${pkg.destination} ${pkg.title} ${pkg.overview}`.toLowerCase();
-      const tokens = q.split(/[\s,&/]+/).filter((t) => t.length > 2 && !['and','the','national','park','reserve','island','beach','coast','kenya','circuits'].includes(t));
+      const tokens = q.split(/[\s,&\/]+/).filter((t) => t.length > 2 && !['and','the','national','park','reserve','island','beach','coast','kenya','circuits'].includes(t));
       if (!fields.includes(q) && !tokens.some((t) => fields.includes(t))) return false;
     }
     if (searchKeyword) {
