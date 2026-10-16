@@ -1,0 +1,6 @@
+{
+  "name": "Nexus Dynamics",
+  "description": "Pushworld Travel - Local and international safaris, holidays, hotel bookings, vacation homes, B&Bs, flights, airport transfers, and personalised travel planning.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
